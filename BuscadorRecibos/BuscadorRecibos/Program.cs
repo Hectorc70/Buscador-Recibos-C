@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -15,7 +16,11 @@ namespace BuscadorRecibos
 
         static void EscribirDatosTxt()
         {
-            string ruta = @"C:\Users\Hector\Documents\ARCHIVOS_PARA_PRUEBAS\recibos\01\ORDINARIA\PDF\RECIBOS\Base4_Cheques_201901.pdf";
+            Console.WriteLine("Introduzca una ruta de un archivo de recibos: ");
+
+            string ruta;
+            ruta = Console.ReadLine();
+           
             var datosPdf = DevolverdatosPagina(ruta);
 
             using (System.IO.StreamWriter archivo = new System.IO.StreamWriter(@"C:\\METADATOS_RECIBOS\\Metadatos.txt"))
