@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
+using System.Resources;
 
 namespace BuscadorRecibos
 {
@@ -12,19 +12,29 @@ namespace BuscadorRecibos
         {
             EscribirDatosTxt();
             Console.WriteLine("Datos Escritos");
+            Console.WriteLine("Introduzca una ruta de un archivo de recibos: ");
+            string ruta;
+            ruta = Console.ReadLine();
+           
         }
 
         static void EscribirDatosTxt()
         {
-            Console.WriteLine("Introduzca una ruta de un archivo de recibos: ");
+            Console.WriteLine("Introduzca una ruta de una carpeta con recibos: ");
 
             string ruta;
             ruta = Console.ReadLine();
-           
-            var datosPdf = DevolverdatosPagina(ruta);
+            Rutas recibos = new Rutas();
+            var recibos_rutas = recibos.RecuperarArchivos(ruta);
 
             using (System.IO.StreamWriter archivo = new System.IO.StreamWriter(@"C:\\METADATOS_RECIBOS\\Metadatos.txt"))
+            foreach (string ruta_reci in recibos_rutas)
             {
+                var datosPdf = DevolverdatosPagina(ruta_reci);         
+           
+
+            
+            
                 foreach (KeyValuePair<string, Array> dato in datosPdf)
                 {
                     string pagina = dato.Key;
@@ -43,6 +53,7 @@ namespace BuscadorRecibos
 
 
 
+
         }
 
 
@@ -51,7 +62,7 @@ namespace BuscadorRecibos
             Dictionary<string, Array> datosPagina = new Dictionary<string, Array>();
             string[] patrones = { @"No. CONTROL: \d{8}?", @"PERIODO:\d{2}?/\d{4}?" };
 
-
+            
             ArchivoPdf recibo = new ArchivoPdf(ruta);
             var pdf = recibo.LeerPdf();
 
