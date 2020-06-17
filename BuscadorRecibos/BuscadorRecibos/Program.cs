@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Resources;
 using System.Reflection.Metadata.Ecma335;
+using iTextSharp.text.pdf.parser;
+using System.Linq;
 
 namespace BuscadorRecibos
 {
@@ -26,12 +28,12 @@ namespace BuscadorRecibos
             switch(opcion)
             {
                 case 1:
-                    //EscribirDatosTxt();
+                    EscribirDatosTxt();
                     Console.WriteLine("Datos Extraidos y Guardados");
                     Menu();
                     break;
-                case 2:                   
-                    Console.WriteLine("-----");
+                case 2:
+                    leerDatosTxt();                   
                     Menu();
                     break;
 
@@ -90,7 +92,70 @@ namespace BuscadorRecibos
 
         }
 
+        static void leerDatosTxt()
+        {
+            //Lee los datos del archivo de metadatos y devuelve las coincidencias
 
+
+            Dictionary<string, Array> periodosEncontrados = new Dictionary<string, Array>(); 
+            string[] lineas  = System.IO.File.ReadAllLines(@"C:\\METADATOS_RECIBOS\\Metadatos.txt");
+
+            Console.WriteLine("Escriba un numero de control: ");
+            string inControl = Console.ReadLine();
+            int inControlC = Int32.Parse(inControl);
+
+            Console.WriteLine("Escriba un año: ");
+            string inAnno = Console.ReadLine();
+            int inAnnoA = Int32.Parse(inAnno);
+
+            Console.WriteLine("Escriba un periodo: ");
+            string inPeriodo = Console.ReadLine();
+            int inPeriodoP = Int32.Parse(inPeriodo);
+
+
+            string perAnno = inPeriodoP.ToString("00") + "/" + inAnnoA;
+
+            Console.WriteLine("Indique una carpera de Guardado: ");
+            string inRutaGuardado = Console.ReadLine();
+            
+            // bucle que recorre cada linea del archivo TXT de los metadatos
+
+            for (int l=0; l < lineas.Length; l++)    
+            {
+                string control = lineas[l].Split("|")[0].Split(":")[1];
+                int controlT = Int32.Parse(control);
+                string periodoAnno = lineas[l].Split("|")[1].Split(":")[1];
+                string periodo = lineas[l].Split("|")[1].Split(":")[1].Split("/")[0];
+                string anno = lineas[l].Split("|")[1].Split(":")[1].Split("/")[1];
+                string hoja = lineas[l].Split("|")[2];
+
+                string ruta = lineas[l].Split("|")[3];
+                
+
+                if (inControlC == controlT & perAnno == periodoAnno)   //compara que los datos del usuario esten en los metadatos 
+                {
+                    string[] datos = new string[2];
+                   
+
+                    datos[0] = ruta;     //se almacenan para futura funcionalidad
+                    datos[1] = hoja;
+
+                    periodosEncontrados.Add(control + "|" + periodoAnno, datos);
+                    int pagina = Int32.Parse(hoja);
+
+                    ArchivoPdf recibo = new ArchivoPdf(ruta);
+                    string rutaGuardado = inRutaGuardado + "\\" + control + "_" + anno + periodo + ".pdf";
+                    recibo.ExtraerPaginaPdf(pagina, rutaGuardado);
+                    Console.WriteLine("RECIBO GUARDADO EN:" + rutaGuardado);
+
+
+                }
+                
+            }
+
+           
+           
+        }
         static IDictionary<string, Array> DevolverdatosPagina(string ruta)
         {
             Dictionary<string, Array> datosPagina = new Dictionary<string, Array>();
@@ -145,6 +210,10 @@ namespace BuscadorRecibos
         }
 
 
+        static void ExtraerRecibo()
+        {
+
+        }
     }
 
 }
