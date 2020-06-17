@@ -1,7 +1,13 @@
-﻿using System.Text;
+﻿
+using System.Text;
+using System.IO;
 using System.Collections.Generic;
+
+using iTextSharp;
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+
 
 namespace BuscadorRecibos
 {
@@ -44,5 +50,25 @@ namespace BuscadorRecibos
 
         }
 
+
+        public void ExtraerPaginaPdf(int pagina, string rutaGuardado)
+        //Metodo que extrae una pagina de un archivo pdf
+        {
+
+            PdfReader archivo = new PdfReader(this.rutaArchivo);
+            using (FileStream fs = new FileStream(rutaGuardado, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                using (Document doc = new Document())
+                {
+                    using (PdfWriter archivoWrite = PdfWriter.GetInstance(doc, fs))
+                    {
+                        doc.Open();
+                        doc.NewPage();
+                        archivoWrite.DirectContent.AddTemplate(archivoWrite.GetImportedPage(archivo, pagina), 0, 0);
+                        doc.Close();
+                    }
+                }
+            }
+        }
     }
 }
