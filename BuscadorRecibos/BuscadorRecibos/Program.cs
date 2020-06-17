@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Resources;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BuscadorRecibos
 {
@@ -10,14 +11,47 @@ namespace BuscadorRecibos
     {
         static void Main(string[] args)
         {
-            EscribirDatosTxt();
-            Console.WriteLine("Datos Escritos");
-            Console.WriteLine("Introduzca una ruta de un archivo de recibos: ");
-            string ruta;
-            ruta = Console.ReadLine();
-           
-        }
+            Menu();
 
+
+        }
+        static void Menu()
+        {
+            //Menu de usuario 
+            Console.WriteLine("Elija una opción('1'=Extraer Metadatos, '2'=Buscar_Recibo y Extraer en PDF, '3'=Salir): ");
+
+            string opcionEntrada = Console.ReadLine();
+            int opcion = Int32.Parse(opcionEntrada);
+            
+            switch(opcion)
+            {
+                case 1:
+                    //EscribirDatosTxt();
+                    Console.WriteLine("Datos Extraidos y Guardados");
+                    Menu();
+                    break;
+                case 2:                   
+                    Console.WriteLine("-----");
+                    Menu();
+                    break;
+
+                case 3:
+                    Console.WriteLine("Cerrando...");
+                    break;
+            
+                default:
+                    Console.WriteLine("Elija una opcion valida");
+                    Menu();
+                    break;
+
+            }
+            
+             
+
+           
+            
+
+        }
         static void EscribirDatosTxt()
         {
             Console.WriteLine("Introduzca una ruta de una carpeta con recibos: ");
@@ -41,7 +75,7 @@ namespace BuscadorRecibos
                     var control = dato.Value.GetValue(0);
                     var periodo = dato.Value.GetValue(1);
 
-                    string linea = control.ToString() + "|" + periodo.ToString() + "|" + pagina + "|" + ruta;
+                    string linea = control.ToString() + "|" + periodo.ToString() + "|" + pagina + "|" + ruta_reci;
 
 
                     archivo.WriteLine(linea);
